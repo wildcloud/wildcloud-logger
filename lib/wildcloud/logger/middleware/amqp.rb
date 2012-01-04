@@ -21,12 +21,22 @@ module Wildcloud
           @app = app
           @exchange = options[:exchange]
           @key = options[:key] ? options[:key] : :json_encoded
-          @options = {}
-          @options[:routing_key] = options[:routing_key] if options[:routing_key]
+          @options = options
+          @options[:call_routing_key] = true if @options[:routing_key].respond_to?(:call)
         end
 
         def call(msg)
-          @exchange.publish(msg[@key], @options)
+          options = {}
+          case
+            when @options[:call_routing_key]
+              key = @options[:routing_key].call(msg)
+              options[:routing_key] = key if key
+            when @options[:routing_key]
+              options[:routing_key] = @options[:routing_key]
+            else
+              options[:routing_key] = ''
+          end
+          @exchange.publish(msg[@key], options)
           @app.call(msg)
         end
 

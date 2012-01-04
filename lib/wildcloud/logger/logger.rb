@@ -38,6 +38,13 @@ module Wildcloud
         @app = nil
       end
 
+      def remove(middleware)
+        @stack.delete_if do |mw|
+          middleware == mw[0]
+        end
+        @app = nil
+      end
+
       def build
         @app = @stack.reverse.inject(@base) do |app, middleware|
           clazz, options = middleware

@@ -14,6 +14,6 @@
 
 module Wildcloud
   module Logger
-    VERSION = '0.0.1' unless const_defined?(:VERSION)
+    VERSION = '0.0.2' unless const_defined?(:VERSION)
   end
 end
